@@ -3,174 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lesson 11 - JavaScript Slideshow and Loops</title>
-
+  <title>Lesson 11 - JavaScript Slideshow</title>
   <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #eef4ff;
-      color: #1f2937;
-    }
-
-    header {
-      text-align: center;
-      padding: 35px 20px;
-      background: #2563eb;
-      color: white;
-    }
-
-    header h1 { margin: 0 0 10px; font-size: 32px; }
-    header p { margin: 0; font-size: 18px; }
-
-    main {
-      width: 90%;
-      max-width: 1000px;
-      margin: 30px auto;
-    }
-
-    section {
-      background: white;
-      padding: 25px;
-      margin-bottom: 25px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    h2 { margin-top: 0; color: #2563eb; }
-
-    .slideshow-box { text-align: center; }
-
-    #slideImage {
-      width: 100%;
-      max-width: 750px;
-      height: 420px;
-      object-fit: cover;
-      border-radius: 14px;
-      border: 4px solid #2563eb;
-      background: #dbeafe;
-    }
-
-    #imageCaption {
-      font-size: 18px;
-      margin: 15px 0 5px;
-      font-weight: bold;
-    }
-
-    #imageCounter { margin: 0 0 20px; color: #4b5563; }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    button {
-      border: none;
-      background: #2563eb;
-      color: white;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #1d4ed8;
-      transform: translateY(-2px);
-    }
-
-    .stop-btn { background: #dc2626; }
-    .stop-btn:hover { background: #b91c1c; }
-
-    #allImages {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .small-image {
-      width: 120px;
-      height: 75px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 3px solid transparent;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .small-image:hover {
-      transform: scale(1.05);
-      border-color: #2563eb;
-    }
-
-    .active { border-color: #dc2626; }
-
-    .explanation p,
-    .instructions li { line-height: 1.6; }
-
-    code {
-      background: #f3f4f6;
-      padding: 2px 6px;
-      border-radius: 5px;
-      color: #dc2626;
-    }
-
-    @media (max-width: 700px) {
-      #slideImage { height: 260px; }
-      header h1 { font-size: 25px; }
-    }
+    body { font-family: Arial, sans-serif; text-align: center; }
+    #slideImage { width: 80%; max-width: 600px; height: 350px; object-fit: cover; }
+    .buttons { margin-top: 15px; }
+    button { margin: 5px; padding: 10px 15px; cursor: pointer; }
+    #allImages { margin-top: 20px; }
+    .small-image { width: 100px; height: 60px; object-fit: cover; margin: 5px; cursor: pointer; }
+    .active { border: 3px solid red; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Lesson 11: JavaScript Slideshow</h1>
-    <p>An app that uses arrays, functions, loops, and automatic image changing.</p>
-  </header>
+  <h1>Lesson 11: JavaScript Slideshow</h1>
+  <p>Click buttons or autoplay the slideshow.</p>
 
-  <main>
-    <section class="slideshow-box">
-      <h2>My Gallery</h2>
+  <img id="slideImage" src="" alt="Slideshow image" />
+  <p id="imageCaption"></p>
+  <p id="imageCounter"></p>
 
-      <img
-        id="slideImage"
-        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80"
-        alt="Slideshow image"
-      />
+  <div class="buttons">
+    <button onclick="previousImage()">Previous</button>
+    <button onclick="nextImage()">Next</button>
+    <button onclick="startSlideshow()">Start slideshow</button>
+    <button onclick="stopSlideshow()">Stop</button>
+  </div>
 
-      <p id="imageCaption">Mountain and nature</p>
-      <p id="imageCounter">Image 1 of 5</p>
+  <div id="allImages"></div>
 
-      <div class="buttons">
-        <button onclick="previousImage()">Previous</button>
-        <button onclick="nextImage()">Next</button>
-        <button onclick="startSlideshow()">Start slideshow</button>
-        <button class="stop-btn" onclick="stopSlideshow()">Stop</button>
-      </div>
+  <script>
+    const images = [
+      { src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80", caption: "Mountain and nature" },
+      { src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80", caption: "Ocean waves" },
+      { src: "https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80", caption: "Forest path" },
+      { src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80", caption: "Snowy mountains" },
+      { src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=80", caption: "Desert dunes" }
+    ];
 
-      <div id="allImages"></div>
-    </section>
+    let currentImage = 0;
+    let slideshowInterval;
 
-    <section class="explanation">
-      <h2>How the app works</h2>
-      <p><strong>1. Array:</strong> All images are stored inside the <code>images</code> array. An array is a list of values. The first item is at position <code>0</code>.</p>
-      <p><strong>2. Current image:</strong> The variable <code>currentImage</code> remembers which image is currently shown.</p>
-      <p><strong>3. Next button:</strong> <code>nextImage()</code> increases <code>currentImage</code> by 1. If it reaches the end, it goes back to the first image.</p>
-      <p><strong>4. Previous button:</strong> <code>previousImage()</code> decreases <code>currentImage</code> by 1. If it goes before the first image, it jumps to the last image.</p>
-      <p><strong>5. Automatic slideshow:</strong> <code>startSlideshow()</code> uses <code>setInterval()</code> to call <code>nextImage()</code> every 2 seconds.</p>
-      <p><strong>6. Loop:</strong> <code>showSmallImages()</code> uses a <code>for</code> loop to create all thumbnail images under the main image.</p>
-    </section>
+    function showImage(index) {
+      const img = images[index];
+      document.getElementById("slideImage").src = img.src;
+      document.getElementById("imageCaption").textContent = img.caption;
+      document.getElementById("imageCounter").textContent = `Image ${index + 1} of ${images.length}`;
+      const thumbs = document.querySelectorAll(".small-image");
+      thumbs.forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === index);
+      });
+    }
 
-  
-  </main>
+    function nextImage() {
+      currentImage = (currentImage + 1) % images.length;
+      showImage(currentImage);
+    }
 
-  
+    function previousImage() {
+      currentImage = (currentImage - 1 + images.length) % images.length;
+      showImage(currentImage);
+    }
+
+    function startSlideshow() {
+      stopSlideshow();
+      slideshowInterval = setInterval(nextImage, 2000);
+    }
+
+    function stopSlideshow() {
+      clearInterval(slideshowInterval);
+    }
+
+    function showSmallImages() {
+      const container = document.getElementById("allImages");
+      images.forEach((img, index) => {
+        const thumb = document.createElement("img");
+        thumb.src = img.src;
+        thumb.className = "small-image";
+        thumb.onclick = () => {
+          currentImage = index;
+          showImage(currentImage);
+        };
+        container.appendChild(thumb);
+      });
+    }
+
+    showSmallImages();
+    showImage(currentImage);
+  </script>
 </body>
 </html>
